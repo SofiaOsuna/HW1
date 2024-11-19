@@ -108,17 +108,24 @@ dat <- read_csv("contraceptive_use.csv")
    dat_time <- dat2%>%
      filter(division_numeric_code == iso_code)
    
-   temp_plot <- ggplot() +
+   p_time <- ggplot() +
      geom_line(data = est_time, aes(x = Year, y = Median), color = "blue") +
      geom_point(data = dat_time, aes(x = observation, y = contraceptive_use_modern), color = "red")+ 
      labs(x = "Time", y = "Modern use (%)", title = paste("mCPR in", est_time$`Country or area`[1]))
    
 
-     if(CI == 95){
-       temp_plot <- geom_ribbon(data = est_time, aes(x = Year, ymin = L95, ymax = U95, alpha = 0.3))
+     if(is.na(CI) == T){
+      p <- p_time
      }
-    
-     return(temp_plot)
+   else if (CI == 80) {
+     p <- p_time +  
+       geom_ribbon(data = est_time, stat = "identity", aes(x = Year, ymin = L80, ymax = U80, alpha = 0.3))
+   }
+    else {
+      p <- p_time +
+        geom_ribbon(data = est_time, stat = "identity", aes(x = Year, ymin = L95, ymax = U95, alpha = 0.3))
+    }
+     return(p_time)
 }
 ```
 
@@ -132,5 +139,7 @@ plot_cp(dat, est, iso_code = 404, CI = 80)
 ## Exercise 2: GitHub
 
 Create a repo on your GitHub. Commit and push your Rmd and knitted html to your repo. Paste the link to your GitHub repo below.
+
+
 
 
